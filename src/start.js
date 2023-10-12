@@ -22,8 +22,8 @@
             }); });
 
             shapeBox = rect.bbox();
-            lowerConnector.move(shapeBox.cx, shapeBox.height);
-            text.move(shapeBox.cx);
+            lowerConnector.move(shapeBox.cx - (lowerConnector.bbox().width / 2), shapeBox.height);
+            text.move(shapeBox.cx - (text.bbox().width / 2));
             text.cy(shapeBox.cy);
             group.add(lowerConnector);
 
