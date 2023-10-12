@@ -1,6 +1,6 @@
-        return {
-            config: setParams,
-            draw: setRoot,
-            shapes: layoutShapes
-        };
-    }());
+return {
+    config: setParams,
+    draw: setRoot,
+    shapes: layoutShapes
+};
+}());
