@@ -1,8 +1,8 @@
 {
   "name":  "flowSVG",
-   "description":  "A library for creating  simple interactive and static flow charts",
+   "description":  "A library for creating  simple interactive and static flow charts, forked from the abandoned project by rtalbot89",
    "keywords":  ["svg", "vector", "graphics", "flow", "chart"],
-   "author":  "Rob Talbot <robtalbot89@gmail.com>",
+   "author":  "Nigel Cunningham <nigel@nigelcunningham.com.au>",
    "main":  "dist/flowsvg.js",
    "version": "0.2.0",
    "jam": {
@@ -14,8 +14,8 @@
    },
    "maintainers": [
    {
-     "name": "Rob Talbot",
-     "email":  "robtalbot89@gmail.com"
+     "name": "Nigel Cunningham",
+     "email":  "nigel@nigelcunningham.com.au"
    }
    ],
    "licenses": [
@@ -26,9 +26,9 @@
    ],
    "repository": {
      "type": "git",
-     "url": "https://github.com/rtalbot89/flow-svg.git"
+     "url": "https://github.com/nigelcunningham/flow-svg.git"
    },
-   "github":  "https://github.com/rtalbot89/flow-svg",
+   "github":  "https://github.com/nigelcunningham/flow-svg",
    
   "engines": {
     "node": ">= 0.10.0"
