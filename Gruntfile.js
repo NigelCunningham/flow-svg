@@ -102,8 +102,8 @@ module.exports = function(grunt) {
   },
     watch: {
       gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
+        files: [ '<%= jshint.gruntfile.src %>', '<%= concat.dist.src %>' ],
+        tasks: ['jshint', 'concat', 'uglify']
       },
       lib_test: {
         files: '<%= jshint.lib_test.src %>',
