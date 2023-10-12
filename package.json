@@ -1,45 +1,52 @@
 {
-  "name":  "flowSVG",
-   "description":  "A library for creating  simple interactive and static flow charts, forked from the abandoned project by rtalbot89",
-   "keywords":  ["svg", "vector", "graphics", "flow", "chart"],
-   "author":  "Nigel Cunningham <nigel@nigelcunningham.com.au>",
-   "main":  "dist/flowsvg.js",
-   "version": "0.2.0",
-   "jam": {
-     "include": [
+  "name": "flowSVG",
+  "description": "A library for creating  simple interactive and static flow charts, forked from the abandoned project by rtalbot89",
+  "keywords": [
+    "svg",
+    "vector",
+    "graphics",
+    "flow",
+    "chart"
+  ],
+  "author": "Nigel Cunningham <nigel@nigelcunningham.com.au>",
+  "main": "dist/flowsvg.js",
+  "version": "0.2.0",
+  "jam": {
+    "include": [
       "dist/flowsvg.js",
       "README.md",
       "MIT-LICENSE"
-     ]
-   },
-   "maintainers": [
-   {
-     "name": "Nigel Cunningham",
-     "email":  "nigel@nigelcunningham.com.au"
-   }
-   ],
-   "licenses": [
-   {
-     "type": "MIT",
-     "url": "http://www.opensource.org/licenses/mit-license.php"
-   }
-   ],
-   "repository": {
-     "type": "git",
-     "url": "https://github.com/nigelcunningham/flow-svg.git"
-   },
-   "github":  "https://github.com/nigelcunningham/flow-svg",
-   
+    ]
+  },
+  "maintainers": [
+    {
+      "name": "Nigel Cunningham",
+      "email": "nigel@nigelcunningham.com.au"
+    }
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nigelcunningham/flow-svg.git"
+  },
+  "github": "https://github.com/nigelcunningham/flow-svg",
   "engines": {
     "node": ">= 0.16.0"
   },
   "devDependencies": {
     "grunt": "^1.6.1",
-    "grunt-contrib-jshint": "^3.2.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-contrib-qunit": "^8.0.1",
     "grunt-contrib-concat": "^2.1.0",
+    "grunt-contrib-jasmine": "^4.0.0",
+    "grunt-contrib-jshint": "^3.2.0",
+    "grunt-contrib-qunit": "^8.0.1",
     "grunt-contrib-uglify": "^5.2.1",
-    "grunt-contrib-jasmine": "^4.0.0"
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-indent": "^1.0.0",
+    "grunt-jsbeautifier": "^0.2.13"
   }
 }

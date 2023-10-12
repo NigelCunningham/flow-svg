@@ -56,6 +56,9 @@ module.exports = function(grunt) {
         dest: 'dist/flowsvg.js'
       }
     },
+    jsbeautifier: {
+        src: 'dist/flowsvg.js',
+    },
     uglify: {
       options: {
         banner: '<%= banner %>'
@@ -103,7 +106,7 @@ module.exports = function(grunt) {
     watch: {
       gruntfile: {
         files: [ '<%= jshint.gruntfile.src %>', '<%= concat.dist.src %>' ],
-        tasks: ['jshint', 'concat', 'uglify']
+        tasks: ['jshint', 'concat', 'jsbeautifier', 'uglify']
       },
       lib_test: {
         files: '<%= jshint.lib_test.src %>',
@@ -114,6 +117,7 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -121,6 +125,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'beautify', 'uglify']);
 
 };
