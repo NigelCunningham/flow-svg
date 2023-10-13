@@ -10,7 +10,7 @@
   ],
   "author": "Nigel Cunningham <nigel@nigelcunningham.com.au>",
   "main": "dist/flowsvg.js",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "jam": {
     "include": [
       "dist/flowsvg.js",

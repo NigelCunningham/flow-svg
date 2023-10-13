@@ -1,4 +1,4 @@
-/* flowSVG - v0.2.0 - 2023-10-13*/
+/* flowSVG - v0.3.0 - 2023-10-13*/
 /*global SVG, console, window, document, jQuery*/
 var flowSVG = (function() {
     "use strict";
