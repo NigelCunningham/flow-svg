@@ -1,5 +1,5 @@
 {
-  "name": "flowSVG",
+  "name": "@nigelcunningham/flowsvg",
   "description": "A library for creating  simple interactive and static flow charts, forked from the abandoned project by rtalbot89",
   "keywords": [
     "svg",
