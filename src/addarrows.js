@@ -1,5 +1,7 @@
 function addArrows(element) {
-    var group = element.svgid, arrowhead, rightX, rightY, bottomX, bottomY;
+    var group = element.svgid, arrowhead, leftX, leftY, rightX, rightY, bottomX, bottomY;
+    leftX = element.svgshape.x() - config.arrowHeadHeight;
+    leftY =  element.svgshape.cy();
     rightX = element.svgshape.x() + element.svgshape.bbox().width + config.connectorLength - config.arrowHeadHeight;
     rightY =  element.svgshape.cy() - (config.arrowHeadHeight / 2);
     bottomX = element.svgshape.cx()  - (config.arrowHeadHeight / 2);
@@ -19,6 +21,12 @@ function addArrows(element) {
     }
 
     if (element.svgnoid !== undefined) {
+        if (element.orient.no === 'l') {
+            arrowhead = arrowHead(group);
+            arrowhead.move(leftX, leftY);
+            arrowhead.rotate(90);
+        }
+
         if (element.orient.no === 'r') {
             arrowhead = arrowHead(group);
             arrowhead.move(rightX, rightY);

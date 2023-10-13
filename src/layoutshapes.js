@@ -15,7 +15,8 @@ layoutShapes = function (s) {
     shapes.forEach(yesNoIds);
     generateLookups(shapes);
     shapes.forEach(referringIds);
-    shapes.forEach(positionShapes);
+    shapes.forEach(positionShapes, shapes);
+    shapes.forEach(positionOrphans);
     if (interactive === true) {
         shapes.forEach(nodePoints);
         shapes.forEach(addConnectors);

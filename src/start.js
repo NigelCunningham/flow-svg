@@ -12,6 +12,7 @@ function start(shapes) {
         })
         .radius(config.startCornerRadius);
 
+    group.id();
     startId = group.attr('id');
 
     lowerConnector = arrowLine();

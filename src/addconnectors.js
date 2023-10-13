@@ -24,6 +24,11 @@ function addConnectors(element) {
         if (element.orient.no === 'r') {
             endln = [startln[0] + config.connectorLength, startln[1] ];
         }
+
+        if (element.orient.no === 'l') {
+            endln = [startln[0] - config.connectorLength, startln[1] ];
+        }
+
         element.svgid.polyline(angleLine(startln, endln, element)).stroke({ width:  config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
     }
 

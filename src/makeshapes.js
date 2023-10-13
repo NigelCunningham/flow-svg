@@ -2,6 +2,7 @@ function makeShapes(element, index) {
     if (element.type && (typeof shapeFuncs[element.type] === 'function')) {
         var shape = shapeFuncs[element.type](element);
 
+        shape.id();
         element.id = shape.attr('id');
         element.svgid = shape;
         element.svgshape = shape.get(0);

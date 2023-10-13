@@ -1,9 +1,21 @@
-/* flowSVG - v0.2.0 - 2016-03-19*/
+/* flowSVG - v0.2.0 - 2023-10-13*/
 /*global SVG, console, window, document, jQuery*/
-var flowSVG = (function () {
+var flowSVG = (function() {
     "use strict";
-    var draw, lowerConnector, shapeFuncs, i, config, userOpts = {}, shapes, interactive = true, chartGroup, layoutShapes, itemIds = {}, indexFromId = {}, startEl, startId, lookup = {}, isPositioned = [], toggleNext, clicked = [], showButtons = true, scrollto = true, scrollOffset;
-    var lowest = 0, lowestElement = 0, orphanX = 0, orphanY = 0;
+    var draw, lowerConnector, shapeFuncs, i, config, userOpts = {},
+        shapes, interactive = true,
+        chartGroup, layoutShapes, itemIds = {},
+        indexFromId = {},
+        startEl, startId, lookup = {},
+        isPositioned = [],
+        toggleNext, clicked = [],
+        showButtons = true,
+        scrollto = true,
+        scrollOffset;
+    var lowest = 0,
+        lowestElement = 0,
+        orphanX = 0,
+        orphanY = 0;
 
     function setParams(u) {
         userOpts = u;
@@ -31,13 +43,13 @@ var flowSVG = (function () {
                 btnBarHoverColour: userOpts.btnBarHoverColour || 'dimgrey',
                 btnBarFontSize: userOpts.btnBarFontSize || defaultFontSize,
                 btnBarRadius: userOpts.btnBarRadius || 10,
-                shapeWidth: userOpts.shapeWidth  || w,
-                shapeHeight: userOpts.shapeHeight  || h,
+                shapeWidth: userOpts.shapeWidth || w,
+                shapeHeight: userOpts.shapeHeight || h,
                 connectorLength: userOpts.connectorLength || 80,
-                startWidth: userOpts.startWidth  || w,
+                startWidth: userOpts.startWidth || w,
                 startHeight: userOpts.startHeight || 40,
                 startCornerRadius: userOpts.startCornerRadius || 20,
-                startFill:  userOpts.startFill || arrowColour,
+                startFill: userOpts.startFill || arrowColour,
                 startStrokeWidth: userOpts.startStrokeWidth || 0.1,
                 startStrokeColour: userOpts.startStrokeColour || 'rgb(66, 66, 66)',
                 startTextColour: userOpts.startTextColour || lightText,
@@ -48,21 +60,21 @@ var flowSVG = (function () {
                 decisionFill: userOpts.decisionFill || '#8b3572',
                 decisionTextColour: userOpts.decisionTextColour || lightText,
                 decisionFontSize: userOpts.decisionFontSize || defaultFontSize,
-                finishTextColour: userOpts.finishTextColour ||  lightText,
-                finishWidth: userOpts.finishWidth  || w,
-                finishHeight: userOpts.finishHeight  || h,
+                finishTextColour: userOpts.finishTextColour || lightText,
+                finishWidth: userOpts.finishWidth || w,
+                finishHeight: userOpts.finishHeight || h,
                 finishLeftMargin: userOpts.finishLeftMargin || 20,
                 finishFill: userOpts.finishFill || '#0F6C7E',
-                finishFontSize: userOpts.finishFontSize  || defaultFontSize,
+                finishFontSize: userOpts.finishFontSize || defaultFontSize,
                 finishLinkColour: userOpts.finishLinkColour || 'yellow',
-                processWidth: userOpts.processWidth  || w,
-                processHeight: userOpts.processHeight  || h,
+                processWidth: userOpts.processWidth || w,
+                processHeight: userOpts.processHeight || h,
                 processLeftMargin: userOpts.processLeftMargin || 20,
                 processFill: userOpts.processFill || '#fff',
                 processStrokeColour: userOpts.processStrokeColour || shapeStrokeColour,
                 processStrokeWidth: userOpts.processStrokeWidth || 0.1,
                 processTextColour: userOpts.processTextColour || darkText,
-                processFontSize: userOpts.processFontSize  || defaultFontSize,
+                processFontSize: userOpts.processFontSize || defaultFontSize,
                 processLinkColour: userOpts.processLinkColour || 'darkblue',
                 labelWidth: userOpts.labelWidth || 30,
                 labelHeight: userOpts.labelHeight || 20,
@@ -70,10 +82,10 @@ var flowSVG = (function () {
                 labelStroke: userOpts.labelStroke || 0.1,
                 labelFill: userOpts.labelFill || arrowColour,
                 labelOpacity: userOpts.labelOpacity || 1.0,
-                labelFontSize: userOpts.labelFontSize ||  defaultFontSize,
-                labelTextColour: userOpts.labelTextColour ||  lightText,
-                labelYes: userOpts.labelYes ||  'Yes',
-                labelNo: userOpts.labelNo ||  'No',
+                labelFontSize: userOpts.labelFontSize || defaultFontSize,
+                labelTextColour: userOpts.labelTextColour || lightText,
+                labelYes: userOpts.labelYes || 'Yes',
+                labelNo: userOpts.labelNo || 'No',
                 labelNudgeRight: userOpts.labelNudgeRight || 0,
                 labelNudgeBottom: userOpts.labelNudgeBottom || 0,
                 arrowHeadHeight: userOpts.arrowHeadHeight || 20,
@@ -90,27 +102,33 @@ var flowSVG = (function () {
             };
         return defaults;
     }
+
     function generateLookups(s) {
         shapes = s;
         for (i = 0; i < shapes.length; i += 1) {
             lookup[shapes[i].label] = i;
         }
     }
+
     function arrowHead(g) {
         var coords =
             "0,0 " +
-            config.arrowHeadHeight
-            + ",0 "
-            + config.arrowHeadHeight / 2
-            + "," + config.arrowHeadHeight,
+            config.arrowHeadHeight +
+            ",0 " +
+            config.arrowHeadHeight / 2 +
+            "," + config.arrowHeadHeight,
 
             ag = g
-            .polygon(coords).fill({color: config.arrowHeadColor, opacity: config.arrowHeadOpacity})
+            .polygon(coords).fill({
+                color: config.arrowHeadColor,
+                opacity: config.arrowHeadOpacity
+            })
             .cx(config.arrowHeadHeight / 2)
             .cy(config.arrowHeadHeight / 2);
 
         return ag;
     }
+
     function arrowLine() {
         var group = draw.group(),
             ah = arrowHead(group)
@@ -121,13 +139,14 @@ var flowSVG = (function () {
             line = draw
             .line(0, 0, 0, config.connectorLength - config.arrowHeadHeight)
             .attr({
-                'stroke-width':  config.connectorStrokeWidth,
+                'stroke-width': config.connectorStrokeWidth,
                 'stroke': config.connectorStrokeColour
             });
         group.add(line).add(ah);
 
         return group;
     }
+
     function lineLabel(t, g) {
         var text, labelGroup = g.group(),
             label = labelGroup
@@ -151,12 +170,13 @@ var flowSVG = (function () {
         text = labelGroup.text(t).attr({
             fill: config.labelTextColour,
             'text-anchor': 'middle',
-            'font-size' : config.labelFontSize
+            'font-size': config.labelFontSize
         });
         text.cy(label.cy());
 
         return labelGroup;
     }
+
     function decision(options) {
         var shape, text, txtbox,
             group = chartGroup.group(),
@@ -166,8 +186,8 @@ var flowSVG = (function () {
             " " + config.decisionWidth / 2 +
             ",0 " + config.decisionWidth +
             "," + config.decisionHeight / 2 +
-            " " + config.decisionWidth / 2 + ","
-            + config.decisionHeight;
+            " " + config.decisionWidth / 2 + "," +
+            config.decisionHeight;
 
         shape = group.polygon(coords)
             .attr({
@@ -176,19 +196,21 @@ var flowSVG = (function () {
             });
         group.attr('class', 'fc-decision');
 
-        text = group.text(function (add) {
-            options.text.forEach(function (l) {
+        text = group.text(function(add) {
+            options.text.forEach(function(l) {
                 add.tspan(l).newLine().attr('text-anchor', 'middle');
             });
         });
-        text.fill(config.decisionTextColour).font({size: config.decisionFontSize});
+        text.fill(config.decisionTextColour).font({
+            size: config.decisionFontSize
+        });
 
         text.cx(shape.cx() + text.bbox().width / 2 + text.bbox().x);
         text.cy(shape.cy());
 
         // Dealing with links
         if (options.links) {
-            options.links.forEach(function (l) {
+            options.links.forEach(function(l) {
                 var url = draw.link(l.url),
                     txt = draw.text(l.text),
                     tbox;
@@ -196,7 +218,9 @@ var flowSVG = (function () {
                 if (l.target) {
                     url.target(l.target);
                 }
-                txt.fill(config.finishLinkColour).font({size: config.finishFontSize});
+                txt.fill(config.finishLinkColour).font({
+                    size: config.finishFontSize
+                });
                 tbox = text.bbox();
                 txtbox = txt.bbox();
                 txt.dmove(tbox.cx - txtbox.cx, tbox.y2 + 15);
@@ -205,6 +229,7 @@ var flowSVG = (function () {
         }
         return group;
     }
+
     function finish(options) {
         var tip, tg, tiptxt, group = chartGroup.group()
             .attr({
@@ -219,17 +244,19 @@ var flowSVG = (function () {
 
             content = group.group();
 
-        content.text(function (add) {
-            options.text.forEach(function (l) {
-                add.tspan(l).newLine();
-            });
-        })
+        content.text(function(add) {
+                options.text.forEach(function(l) {
+                    add.tspan(l).newLine();
+                });
+            })
             .fill(config.finishTextColour)
-            .font({size: config.finishFontSize});
+            .font({
+                size: config.finishFontSize
+            });
 
         // Dealing with links
         if (options.links) {
-            options.links.forEach(function (l) {
+            options.links.forEach(function(l) {
                 var url = draw.link(l.url),
                     txt = draw.text(l.text),
                     tbox;
@@ -237,7 +264,9 @@ var flowSVG = (function () {
                 if (l.target) {
                     url.target(l.target);
                 }
-                txt.fill(config.finishLinkColour).font({size: config.finishFontSize});
+                txt.fill(config.finishLinkColour).font({
+                    size: config.finishFontSize
+                });
                 tbox = content.bbox();
                 txt.dmove(0, tbox.height + 5);
                 content.add(url);
@@ -248,42 +277,47 @@ var flowSVG = (function () {
 
             tip = group.text(options.tip.title)
                 .fill(config.finishLinkColour)
-                .font({size: config.finishFontSize})
+                .font({
+                    size: config.finishFontSize
+                })
                 .attr('cursor', 'pointer');
 
             tip.move(config.finishLeftMargin, rect.height() - 25);
 
-            tip.on('mouseover', function () {
-                tg = group.group();
-                tiptxt = group.text(function (add) {
-                    options.tip.text.forEach(function (l) {
-                        add.tspan(l).newLine();
-                    });
+            tip.on('mouseover', function() {
+                    tg = group.group();
+                    tiptxt = group.text(function(add) {
+                            options.tip.text.forEach(function(l) {
+                                add.tspan(l).newLine();
+                            });
+                        })
+                        .font({
+                            size: config.tipFontSize
+                        }).move(config.tipMarginLeft, config.tipMarginTop);
+
+                    var rct = tg.rect(config.shapeWidth - (config.finishLeftMargin), tiptxt.bbox().height + (config.tipMarginTop * 2))
+                        .attr({
+                            fill: config.tipFill,
+                            stroke: config.tipStrokeColour,
+                            "class": "fc-tip"
+                        });
+
+                    tg.add(tiptxt);
+                    tg.x(config.finishLeftMargin / 2);
+                    //tg.y(this.getAttribute('y') - rct.height());
+                    var tgb = tg.bbox();
+                    var tgDY = rect.height() - tg.bbox().height - 30;
+                    tg.y(tgDY);
                 })
-                    .font({size: config.tipFontSize}).move(config.tipMarginLeft, config.tipMarginTop);
-
-                var rct = tg.rect(config.shapeWidth - (config.finishLeftMargin), tiptxt.bbox().height + (config.tipMarginTop * 2))
-                    .attr({
-                        fill: config.tipFill,
-                        stroke: config.tipStrokeColour,
-                        "class": "fc-tip"
-                    });
-
-                tg.add(tiptxt);
-                tg.x(config.finishLeftMargin / 2);
-                //tg.y(this.getAttribute('y') - rct.height());
-                var tgb = tg.bbox();
-                var tgDY = rect.height()- tg.bbox().height - 30;
-                tg.y(tgDY);
-            })
-                .on('mouseout', function () {
+                .on('mouseout', function() {
                     tg.remove();
                 });
         }
         // Not sure about the -5 fudge factor
-        content.move(config.finishLeftMargin, ((rect.height() -  content.bbox().height) / 2) - 5);
+        content.move(config.finishLeftMargin, ((rect.height() - content.bbox().height) / 2) - 5);
         return group;
     }
+
     function process(options) {
         var group = chartGroup.group()
             .attr({
@@ -298,16 +332,18 @@ var flowSVG = (function () {
             }),
             content = group.group();
 
-        content.text(function (add) {
-            options.text.forEach(function (l) {
-                add.tspan(l).newLine();
+        content.text(function(add) {
+                options.text.forEach(function(l) {
+                    add.tspan(l).newLine();
+                });
+            })
+            .font({
+                size: config.processFontSize
             });
-        })
-            .font({size: config.processFontSize});
 
         // Dealing with links
         if (options.links) {
-            options.links.forEach(function (l) {
+            options.links.forEach(function(l) {
                 var url = draw.link(l.url),
                     txt = draw.text(l.text),
                     tbox;
@@ -315,7 +351,9 @@ var flowSVG = (function () {
                 if (l.target) {
                     url.target(l.target);
                 }
-                txt.fill(config.processLinkColour).font({size: config.processFontSize});
+                txt.fill(config.processLinkColour).font({
+                    size: config.processFontSize
+                });
                 tbox = content.bbox();
                 txt.dmove(0, tbox.height + 5);
                 content.add(url);
@@ -325,11 +363,13 @@ var flowSVG = (function () {
         content.move(config.finishLeftMargin, ((rect.height() - content.bbox().height) / 2) - 5);
         return group;
     }
+
     shapeFuncs = {
         decision: decision,
         finish: finish,
         process: process
     };
+
     function start(shapes) {
         var text, shapeBox, rect, k,
             group = draw.group().attr({
@@ -339,7 +379,7 @@ var flowSVG = (function () {
         rect = group.rect(config.startWidth, config.startHeight)
             .attr({
                 fill: config.startFill,
-                'stroke-width' : config.startStrokeWidth,
+                'stroke-width': config.startStrokeWidth,
                 stroke: config.startStrokeWidth
             })
             .radius(config.startCornerRadius);
@@ -348,11 +388,13 @@ var flowSVG = (function () {
         startId = group.attr('id');
 
         lowerConnector = arrowLine();
-        text = group.text(function (add) { add.tspan(config.startText).newLine().attr({
-            'text-anchor': 'middle',
-            'font-size': config.startFontSize,
-            'fill' : config.startTextColour
-        }); });
+        text = group.text(function(add) {
+            add.tspan(config.startText).newLine().attr({
+                'text-anchor': 'middle',
+                'font-size': config.startFontSize,
+                'fill': config.startTextColour
+            });
+        });
 
         shapeBox = rect.bbox();
         lowerConnector.move(shapeBox.cx - (lowerConnector.bbox().width / 2), shapeBox.height);
@@ -361,8 +403,10 @@ var flowSVG = (function () {
         group.add(lowerConnector);
 
         if (interactive === true) {
-            group.attr({"cursor": "pointer"});
-            group.click(function () {
+            group.attr({
+                "cursor": "pointer"
+            });
+            group.click(function() {
                 var firstShape = shapes[0].svgid;
 
                 if (shapes[0].show === false) {
@@ -387,6 +431,7 @@ var flowSVG = (function () {
         }
         return group;
     }
+
     function setRoot(el) {
         draw = el;
         chartGroup = draw.group();
@@ -405,6 +450,7 @@ var flowSVG = (function () {
         setRoot(draw);
         layoutShapes(shapes);
     }
+
     function buttonBar() {
         var staticBtn, lastActiveColor, lastStaticColor,
             btnGroup = draw.group()
@@ -418,12 +464,11 @@ var flowSVG = (function () {
             .fill(config.startFill)
             .radius(config.btnBarRadius);
 
-        btnGroup.text('Interactive').attr(
-            {'fill' : config.startTextColour,
+        btnGroup.text('Interactive').attr({
+                'fill': config.startTextColour,
                 'font-size': config.btnBarFontSize,
                 'pointer-events': 'none'
-            }
-        )
+            })
             .cy(config.btnBarHeight / 2)
             .cx(btnBarWidth / 2);
 
@@ -432,13 +477,11 @@ var flowSVG = (function () {
             .fill(config.startFill)
             .radius(config.btnBarRadius).move(btnBarWidth + 5, 0);
 
-        btnGroup.text('Static').attr(
-            {
-                'fill' : config.startTextColour,
-                'font-size':  config.btnBarFontSize,
+        btnGroup.text('Static').attr({
+                'fill': config.startTextColour,
+                'font-size': config.btnBarFontSize,
                 'pointer-events': 'none'
-            }
-        )
+            })
             .cy(config.btnBarHeight / 2)
             .cx((btnBarWidth * 1.5) + 5);
 
@@ -453,40 +496,49 @@ var flowSVG = (function () {
         lastActiveColor = activeBtn.attr('fill');
         lastStaticColor = staticBtn.attr('fill');
 
-        activeBtn.on('mouseover', function () {
-            activeBtn.fill({color: config.btnBarHoverColour});
-        })
-            .on('mouseout', function () {
-                activeBtn.fill({color: lastActiveColor});
+        activeBtn.on('mouseover', function() {
+                activeBtn.fill({
+                    color: config.btnBarHoverColour
+                });
             })
-            .on('click', function () {
+            .on('mouseout', function() {
+                activeBtn.fill({
+                    color: lastActiveColor
+                });
+            })
+            .on('click', function() {
                 interactive = true;
                 activeBtn.fill(config.btnBarSelectedColour);
                 staticBtn.fill(config.startFill);
                 hide();
             })
-            .on('mousedown', function () {
+            .on('mousedown', function() {
                 activeBtn.fill(config.btnBarSelectedColour);
             });
 
-        staticBtn.on('mouseover', function () {
-            staticBtn.fill({color: config.btnBarHoverColour});
-        })
-            .on('mouseout', function () {
-                staticBtn.fill({color: lastStaticColor});
+        staticBtn.on('mouseover', function() {
+                staticBtn.fill({
+                    color: config.btnBarHoverColour
+                });
             })
-            .on('click', function () {
+            .on('mouseout', function() {
+                staticBtn.fill({
+                    color: lastStaticColor
+                });
+            })
+            .on('click', function() {
                 interactive = false;
                 staticBtn.fill(config.btnBarSelectedColour);
                 activeBtn.fill(config.startFill);
                 unhide();
             })
-            .on('mousedown', function () {
+            .on('mousedown', function() {
                 staticBtn.fill(config.btnBarSelectedColour);
             });
 
         return btnGroup;
     }
+
     function makeShapes(element, index) {
         if (element.type && (typeof shapeFuncs[element.type] === 'function')) {
             var shape = shapeFuncs[element.type](element);
@@ -510,6 +562,7 @@ var flowSVG = (function () {
             return false;
         }
     }
+
     function yesNoIds(element) {
         if (element.yes) {
             element.yesid = itemIds[element.yes];
@@ -524,11 +577,16 @@ var flowSVG = (function () {
             element.svgnextid = SVG('#' + itemIds[element.next]);
         }
     }
+
     function referringIds(element) {
         var next;
 
         if (!element.orient) {
-            element.orient = {yes: 'b', no: 'r', next: 'b'};
+            element.orient = {
+                yes: 'b',
+                no: 'r',
+                next: 'b'
+            };
         }
 
         if (element.yes) {
@@ -596,28 +654,32 @@ var flowSVG = (function () {
             }
         }
     }
+
     function overlapAmount(element, shapes) {
         var overlap = 0;
         var eb = element.svgid.bbox();
-        shapes.forEach((shape) => {
-            if (shape !== element) {
+        if (eb.cx) {
+            shapes.forEach((shape) => {
                 var shapeBox = shape.svgid.bbox();
-                if (shapeBox.x >= eb.x && shapeBox.y >= eb.y &&
-                    shapeBox.x2 <= eb.x2 && shapeBox.y2 <= eb.y2) {
-                    if (element.isBelow) {
-                        overlap += shapeBox.height + config.connectorLength;
-                    }
-                    else {
-                        overlap += shapeBox.width + config.connectorLength;
+                if (shape !== element && shapeBox.x) {
+                    if (shapeBox.x <= eb.x2 && shapeBox.y <= eb.y2 &&
+                        shapeBox.x2 >= eb.x && shapeBox.y2 >= eb.y) {
+                        if (element.isBelow) {
+                            overlap += shapeBox.height + config.connectorLength;
+                        } else {
+                            overlap += shapeBox.width + config.connectorLength;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
         return overlap;
     }
+
     function positionShapes(element, index, shapes) {
-        var ce = element.svgid, rightMargin, eb;
-        var below, beside, forceBelow, forceBeside;
+        var ce = element.svgid,
+            rightMargin, eb,
+            below, beside, forceBelow, forceBeside;
 
         if (index === 0) {
             element.isBelow = startId;
@@ -638,8 +700,7 @@ var flowSVG = (function () {
         if (!element.inNode) {
             if (element.isBelow) {
                 element.inNode = 't';
-            }
-            else if (element.isRightOf) {
+            } else if (element.isRightOf) {
                 element.inNode = 'l';
             }
         }
@@ -665,8 +726,7 @@ var flowSVG = (function () {
                 lowestElement = element;
                 orphanY = y + eb.bbox().height + config.connectorLength;
             }
-        }
-        else if (beside) {
+        } else if (beside) {
             if (interactive === false) {
                 rightMargin = element.moveRight !== undefined ? element.moveRight : config.connectorLength;
             } else {
@@ -687,7 +747,8 @@ var flowSVG = (function () {
             }
         }
     }
-    function positionOrphan(element, index) {
+
+    function positionOrphans(element, index) {
         if (element.isBelow || element.isRightOf || element.isLeftOf) {
             return;
         }
@@ -703,6 +764,7 @@ var flowSVG = (function () {
         ce.move(orphanX, orphanY);
         orphanX += ce.bbox().width + config.connectorLength;
     }
+
     function hideShapes(index) {
         var j, sp;
         for (j = index; j < clicked.length; j += 1) {
@@ -713,12 +775,13 @@ var flowSVG = (function () {
         }
         clicked.splice(index, clicked.length);
     }
-    toggleNext = function (e, choice) {
+
+    toggleNext = function(e, choice) {
         var nextlabel, clckindex, scrollid, h, rootId, root, rec, recBox, point, ctm, elementY;
 
         if (choice === 'yes') {
             /* This toggles the visibility if this is the second click
-                    on the button, i.e. it was already visible */
+                        on the button, i.e. it was already visible */
             if (shapes[lookup[e.yes]].show === true && shapes[lookup[e.no]].show === false) {
                 clckindex = clicked.indexOf(e.yes);
                 hideShapes(clckindex);
@@ -763,7 +826,7 @@ var flowSVG = (function () {
                 shapes[lookup[nextlabel]].svgid.animate().opacity(config.maxOpacity);
                 shapes[lookup[nextlabel]].svgid.attr('visibility', 'visible');
                 shapes[lookup[nextlabel]].show = true;
-                scrollid =  shapes[lookup[nextlabel]].id;
+                scrollid = shapes[lookup[nextlabel]].id;
             }
         }
 
@@ -792,12 +855,14 @@ var flowSVG = (function () {
                     shapes[lookup[e.no]].svgnextid.move(e.svgnoid.x(), e.svgnoid.bbox().y + e.svgnoid.bbox().height);
                 }
             }
+
             if (e.orient.no === 'r') {
                 e.svgnoid.move(e.svgid.x() + e.svgid.bbox().width, e.svgid.y());
                 if (shapes[lookup[e.no]].svgnextid !== undefined) {
                     shapes[lookup[e.no]].svgnextid.move(e.svgnoid.x(), e.svgnoid.bbox().y + e.svgnoid.bbox().height);
                 }
             }
+
             if (e.orient.no === 'l') {
                 e.svgnoid.move(e.svgid.x(), e.svgid.y());
                 if (shapes[lookup[e.no]].svgnextid !== undefined) {
@@ -816,7 +881,7 @@ var flowSVG = (function () {
                 shapes[lookup[nextlabel]].show = true;
                 shapes[lookup[nextlabel]].svgid.animate().opacity(config.maxOpacity);
                 shapes[lookup[nextlabel]].svgid.attr('visibility', 'visible');
-                scrollid =  shapes[lookup[nextlabel]].id;
+                scrollid = shapes[lookup[nextlabel]].id;
             }
         }
 
@@ -835,13 +900,15 @@ var flowSVG = (function () {
                 if (window.jQuery && window.jQuery.scrollTo) {
                     jQuery.scrollTo(elementY - h, 1000);
                 } else {
-                    window.scrollTo(0,  elementY - h);
+                    window.scrollTo(0, elementY - h);
                 }
             }
         }
     };
+
     function staticNodePoints(element) {
-        var ce = element.svgid, te, targetShape,
+        var ce = element.svgid,
+            te, targetShape,
             group = chartGroup.group();
 
         if (element.yes && element.yesid !== undefined) {
@@ -918,6 +985,7 @@ var flowSVG = (function () {
                     targetShape.inNodePos = [te.x(), te.cy()];
                 }
             }
+
             if (element.orient.next === 'l') {
                 element.nextOutPos = [ce.bbox().x, ce.bbox().cy];
                 targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
@@ -930,6 +998,7 @@ var flowSVG = (function () {
                     targetShape.inNodePos = [te.x(), te.cy()];
                 }
             }
+
             if (element.orient.next === 'r') {
                 element.nextOutPos = [ce.bbox().x2, ce.bbox().cy];
                 targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
@@ -947,8 +1016,10 @@ var flowSVG = (function () {
         group.back();
         element.conngroup = group;
     }
+
     function nodePoints(element) {
-        var ce = element.svgshape, te, targetShape;
+        var ce = element.svgshape,
+            te, targetShape;
 
         if (element.yes && element.yesid !== undefined) {
             te = shapes[lookup[element.yes]].svgshape;
@@ -1047,14 +1118,15 @@ var flowSVG = (function () {
     }
 
     function addLabels(element) {
-        var group = element.svgid, label;
+        var group = element.svgid,
+            label;
 
         if (element.yes && element.yesid !== undefined) {
             label = lineLabel(config.labelYes, group);
             element.yesBtn = label;
 
             label.attr('cursor', 'pointer');
-            label.on('click', function () {
+            label.on('click', function() {
                 toggleNext(element, 'yes');
             });
             if (element.orient.yes === 'b') {
@@ -1070,7 +1142,7 @@ var flowSVG = (function () {
             label = lineLabel(config.labelNo, group);
             element.noBtn = label;
             label.attr('cursor', 'pointer');
-            label.on('click', function () {
+            label.on('click', function() {
                 toggleNext(element, 'no');
             });
 
@@ -1087,8 +1159,10 @@ var flowSVG = (function () {
             }
         }
     }
+
     function staticAddLabels(element) {
-        var group = element.conngroup, label;
+        var group = element.conngroup,
+            label;
 
         if (element.yes && element.yesid !== undefined) {
             label = lineLabel(config.labelYes, group);
@@ -1118,13 +1192,15 @@ var flowSVG = (function () {
             }
         }
     }
+
     function addArrows(element) {
-        var group = element.svgid, arrowhead, leftX, leftY, rightX, rightY, bottomX, bottomY;
+        var group = element.svgid,
+            arrowhead, leftX, leftY, rightX, rightY, bottomX, bottomY;
         leftX = element.svgshape.x() - config.arrowHeadHeight;
-        leftY =  element.svgshape.cy();
+        leftY = element.svgshape.cy();
         rightX = element.svgshape.x() + element.svgshape.bbox().width + config.connectorLength - config.arrowHeadHeight;
-        rightY =  element.svgshape.cy() - (config.arrowHeadHeight / 2);
-        bottomX = element.svgshape.cx()  - (config.arrowHeadHeight / 2);
+        rightY = element.svgshape.cy() - (config.arrowHeadHeight / 2);
+        bottomX = element.svgshape.cx() - (config.arrowHeadHeight / 2);
         bottomY = element.svgshape.y() + element.svgshape.bbox().height + config.connectorLength - config.arrowHeadHeight;
 
         if (element.svgyesid !== undefined) {
@@ -1172,8 +1248,10 @@ var flowSVG = (function () {
             }
         }
     }
+
     function staticAddArrows(element) {
-        var group = element.conngroup, arrowhead, nxt;
+        var group = element.conngroup,
+            arrowhead, nxt;
 
         if (element.yes && element.yesid !== undefined) {
             arrowhead = arrowHead(group);
@@ -1206,12 +1284,12 @@ var flowSVG = (function () {
 
             if (element.orient.no === 'r') {
                 arrowhead.move(nxt.inNodePos[0] - config.arrowHeadHeight, nxt.inNodePos[1] - (config.arrowHeadHeight / 2));
-                if(nxt.inNode === 'l') {
+                if (nxt.inNode === 'l') {
                     arrowhead.rotate(270);
                 }
 
-                if(nxt.inNode === 't') {
-                    arrowhead.move(nxt.inNodePos[0] - (config.arrowHeadHeight / 2) , nxt.inNodePos[1] - config.arrowHeadHeight);
+                if (nxt.inNode === 't') {
+                    arrowhead.move(nxt.inNodePos[0] - (config.arrowHeadHeight / 2), nxt.inNodePos[1] - config.arrowHeadHeight);
                 }
             }
         }
@@ -1233,9 +1311,12 @@ var flowSVG = (function () {
             }
         }
     }
+
     function angleLine(start, end, element, targetId, overlapShift) {
 
-        var e = element.svgshape, p1, p2, p3, p4, p5, spacer = config.arrowHeadHeight * 2, endPos;
+        var e = element.svgshape,
+            p1, p2, p3, p4, p5, spacer = config.arrowHeadHeight * 2,
+            endPos;
 
         // See if it's at the bottom
         if (start[1] === e.y() + e.height()) {
@@ -1248,20 +1329,19 @@ var flowSVG = (function () {
                     p2 = [start[0] + xOffset, start[1] + yOffset];
                     p3 = [start[0] + xOffset, end[1] - yOffset - config.arrowHeadHeight];
                     p4 = [end[0], end[1] - yOffset - config.arrowHeadHeight];
-                    return [ start, p1, p2, p3, p4, end];
-                }
-                else {
+                    return [start, p1, p2, p3, p4, end];
+                } else {
                     // Untested.
                     p1 = [start[0] + xOffset, start[1]];
                     p2 = [start[0] + xOffset, start[1] + yOffset];
                     p3 = [end[0] - xOffset - config.arrowHeadHeight, start[1] + yOffset];
                     p4 = [end[0] - xOffset - config.arrowHeadHeight, start[1]];
-                    return [ start, p1, p2, p3, p4, end];
+                    return [start, p1, p2, p3, p4, end];
                 }
             }
 
             p1 = start;
-            p2 = [start[0], start[1] + spacer ];
+            p2 = [start[0], start[1] + spacer];
 
             if (end[1] > start[1]) {
                 p2 = [start[0], end[1] - spacer];
@@ -1275,8 +1355,8 @@ var flowSVG = (function () {
             if (end[1] <= start[1]) {
                 p3 = [end[0], end[1] + spacer];
             }
-            endPos = [end[0],  end[1] - config.arrowHeadHeight];
-            return [p1, p2, p3, endPos ];
+            endPos = [end[0], end[1] - config.arrowHeadHeight];
+            return [p1, p2, p3, endPos];
         }
 
         // see if out is on the right and in is at the top
@@ -1285,7 +1365,7 @@ var flowSVG = (function () {
             p2 = [start[0] + spacer, start[1]];
             p3 = [start[0] + spacer, end[1] - spacer];
             p4 = [end[0], end[1] - spacer];
-            endPos = [end[0],  end[1] - config.arrowHeadHeight];
+            endPos = [end[0], end[1] - config.arrowHeadHeight];
             return [p1, p2, p3, p4, endPos];
         }
 
@@ -1296,21 +1376,21 @@ var flowSVG = (function () {
             p3 = [start[0] + spacer, end[1] - (config.shapeHeight / 2) - spacer];
             p4 = [end[0] - spacer, end[1] - (config.shapeHeight / 2) - spacer];
             p5 = [end[0] - spacer, end[1]];
-            endPos = [end[0],  end[1]];
+            endPos = [end[0], end[1]];
             return [p1, p2, p3, p4, p5, endPos];
         }
 
         // see if it finishes on the right and below
         /*
-            if ((start[0] < end[0]) && (start[1] < end[1])) {
-                p1 = start;
-                p2 = [start[0], start[1] + spacer];
-                p3 = [end[0], start[1] + spacer];
-                endPos = [end[0],  end[1] - config.arrowHeadHeight];
-                return [p1, p2, p3, endPos];
+                if ((start[0] < end[0]) && (start[1] < end[1])) {
+                    p1 = start;
+                    p2 = [start[0], start[1] + spacer];
+                    p3 = [end[0], start[1] + spacer];
+                    endPos = [end[0],  end[1] - config.arrowHeadHeight];
+                    return [p1, p2, p3, endPos];
 
-            }
-            */
+                }
+                */
 
         // see if it starts on the left and in on the right and below
         if ((start[0] < end[0]) && (start[1] < end[1])) {
@@ -1323,7 +1403,7 @@ var flowSVG = (function () {
 
                 p1 = start;
                 p2 = [start[0] + (spacer / 2), start[1]];
-                p3 = [start[0] + (spacer /2), end[1]];
+                p3 = [start[0] + (spacer / 2), end[1]];
                 endPos = [end[0] - config.arrowHeadHeight, end[1]];
                 return [p1, p2, p3, endPos];
 
@@ -1334,11 +1414,10 @@ var flowSVG = (function () {
                     p1 = start;
                     p2 = [start[0] - (spacer / 2), start[1]];
                     p3 = [start[0] - (spacer / 2), end[1] - config.arrowHeadHeight - (spacer / 2)];
-                    p4 = [end[0], end[1] - config.arrowHeadHeight  - (spacer / 2)];
+                    p4 = [end[0], end[1] - config.arrowHeadHeight - (spacer / 2)];
                     p5 = [end[0], end[1] - config.arrowHeadHeight];
                     return [start, p1, p2, p3, p4, p5]
-                }
-                else {
+                } else {
                     p1 = start;
                     p2 = [end[0], start[1]];
                     // p3 = [start[0] + (spacer /2), end[1]];
@@ -1351,10 +1430,11 @@ var flowSVG = (function () {
         }
 
         if (start[1] < end[1]) {
-            endPos = [end[0],  end[1] - config.arrowHeadHeight];
+            endPos = [end[0], end[1] - config.arrowHeadHeight];
         } else if (start[0] < end[0]) {
-            endPos = [end[0]  - config.arrowHeadHeight,  end[1]];
+            endPos = [end[0] - config.arrowHeadHeight, end[1]];
         }
+
         if (overlapShift) {
             var xOffset = config.connectorLength * 1 / 4;
             var yOffset = config.connectorLength * 5 / 4;
@@ -1364,18 +1444,18 @@ var flowSVG = (function () {
                 p2 = [start[0] + xOffset, start[1] + yOffset];
                 p3 = [end[0] - xOffset - config.arrowHeadHeight, start[1] + yOffset];
                 p4 = [end[0] - xOffset - config.arrowHeadHeight, start[1]];
-                return [ start, p1, p2, p3, p4, endPos];
-            }
-            else {
+                return [start, p1, p2, p3, p4, endPos];
+            } else {
                 p1 = [start[0] + xOffset, start[1]];
                 p2 = [start[0] + xOffset, start[1] + yOffset];
                 p3 = [end[0] - xOffset - config.arrowHeadHeight, start[1] + yOffset];
                 p4 = [end[0] - xOffset - config.arrowHeadHeight, start[1]];
-                return [ start, p1, p2, p3, p4, endPos];
+                return [start, p1, p2, p3, p4, endPos];
             }
         }
         return [start, endPos];
     }
+
     function addConnectors(element) {
         var startln, endln;
 
@@ -1383,49 +1463,60 @@ var flowSVG = (function () {
             startln = element.yesOutPos;
 
             if (element.orient.yes === 'b') {
-                endln = [startln[0], startln[1] + config.connectorLength ];
+                endln = [startln[0], startln[1] + config.connectorLength];
             }
 
             if (element.orient.yes === 'r') {
                 endln = [startln[0] + config.connectorLength, startln[1]];
             }
-            element.svgid.polyline(angleLine(startln, endln, element)).stroke({ width: config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
+            element.svgid.polyline(angleLine(startln, endln, element)).stroke({
+                width: config.connectorStrokeWidth,
+                color: config.connectorStrokeColour
+            }).fill('none');
         }
 
         if (element.noid) {
             startln = element.noOutPos;
 
             if (element.orient.no === 'b') {
-                endln = [startln[0], startln[1] + config.connectorLength ];
+                endln = [startln[0], startln[1] + config.connectorLength];
             }
 
             if (element.orient.no === 'r') {
-                endln = [startln[0] + config.connectorLength, startln[1] ];
+                endln = [startln[0] + config.connectorLength, startln[1]];
             }
 
             if (element.orient.no === 'l') {
-                endln = [startln[0] - config.connectorLength, startln[1] ];
+                endln = [startln[0] - config.connectorLength, startln[1]];
             }
-            element.svgid.polyline(angleLine(startln, endln, element)).stroke({ width:  config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
+
+            element.svgid.polyline(angleLine(startln, endln, element)).stroke({
+                width: config.connectorStrokeWidth,
+                color: config.connectorStrokeColour
+            }).fill('none');
         }
 
         if (element.nextid) {
             startln = element.nextOutPos;
 
             if (element.orient.next === 'b') {
-                endln = [startln[0], startln[1] + config.connectorLength ];
+                endln = [startln[0], startln[1] + config.connectorLength];
             }
 
             if (element.orient.next === 'r') {
-                endln = [startln[0] + config.connectorLength, startln[1] ];
+                endln = [startln[0] + config.connectorLength, startln[1]];
             }
 
             if (endln === undefined) {
                 endln = shapes[lookup[element.next]].yesOutPos;
             }
-            element.svgid.polyline(angleLine(startln, endln, element)).stroke({ width:  config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
+            element.svgid.polyline(angleLine(startln, endln, element)).stroke({
+                width: config.connectorStrokeWidth,
+                color: config.connectorStrokeColour
+            }).fill('none');
         }
     }
+
     function staticAddConnectors(element) {
         var startln, endln, overlapShift;
 
@@ -1433,14 +1524,22 @@ var flowSVG = (function () {
             startln = element.yesOutPos;
             endln = shapes[lookup[element.yes]].inNodePos;
             overlapShift = shapes[lookup[element.yes]].overlapShift;
-            element.conngroup.polyline(angleLine(startln, endln, element, element.yesid, overlapShift)).stroke({ width:  config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
+            element.conngroup.polyline(angleLine(startln, endln, element, element.yesid, overlapShift))
+                .stroke({
+                    width: config.connectorStrokeWidth,
+                    color: config.connectorStrokeColour
+                }).fill('none');
         }
 
         if (element.noid) {
             startln = element.noOutPos;
             endln = shapes[lookup[element.no]].inNodePos;
             overlapShift = shapes[lookup[element.no]].overlapShift;
-            element.conngroup.polyline(angleLine(startln, endln, element, element.noid, overlapShift)).stroke({ width:  config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
+            element.conngroup.polyline(angleLine(startln, endln, element, element.noid, overlapShift))
+                .stroke({
+                    width: config.connectorStrokeWidth,
+                    color: config.connectorStrokeColour
+                }).fill('none');
         }
 
         if (element.nextid) {
@@ -1451,10 +1550,15 @@ var flowSVG = (function () {
             if (endln === undefined) {
                 endln = shapes[lookup[element.next]].yesOutPos;
             }
-            element.conngroup.polyline(angleLine(startln, endln, element, element.nextid, overlapShift)).stroke({ width:  config.connectorStrokeWidth, color: config.connectorStrokeColour}).fill('none');
+            element.conngroup.polyline(angleLine(startln, endln, element, element.nextid, overlapShift))
+                .stroke({
+                    width: config.connectorStrokeWidth,
+                    color: config.connectorStrokeColour
+                }).fill('none');
         }
     }
-    layoutShapes = function (s) {
+
+    layoutShapes = function(s) {
         shapes = s;
         var btnBar;
         config = init();
@@ -1472,7 +1576,7 @@ var flowSVG = (function () {
         generateLookups(shapes);
         shapes.forEach(referringIds);
         shapes.forEach(positionShapes, shapes);
-        shapes.forEach(positionOrphan);
+        shapes.forEach(positionOrphans);
         if (interactive === true) {
             shapes.forEach(nodePoints);
             shapes.forEach(addConnectors);
@@ -1487,6 +1591,7 @@ var flowSVG = (function () {
             shapes.forEach(staticAddArrows);
         }
     };
+
     return {
         config: setParams,
         draw: setRoot,

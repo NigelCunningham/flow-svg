@@ -77,10 +77,18 @@ toggleNext = function (e, choice) {
                 shapes[lookup[e.no]].svgnextid.move(e.svgnoid.x(), e.svgnoid.bbox().y + e.svgnoid.bbox().height);
             }
         }
+
         if (e.orient.no === 'r') {
             e.svgnoid.move(e.svgid.x() + e.svgid.bbox().width, e.svgid.y());
             if (shapes[lookup[e.no]].svgnextid !== undefined) {
                 shapes[lookup[e.no]].svgnextid.move(e.svgnoid.x(), e.svgnoid.bbox().y + e.svgnoid.bbox().height);
+            }
+        }
+
+        if (e.orient.no === 'l') {
+            e.svgnoid.move(e.svgid.x(), e.svgid.y());
+            if (shapes[lookup[e.no]].svgnextid !== undefined) {
+                shapes[lookup[e.no]].svgnextid.move(e.svgnoid.x(), e.svgnoid.bbox().y);
             }
         }
 
@@ -105,7 +113,7 @@ toggleNext = function (e, choice) {
         rootId = draw.attr('id');
         root = document.getElementById(rootId);
         rec = document.getElementById(scrollid);
-        recBox = SVG.get(scrollid).bbox();
+        recBox = SVG(scrollid).bbox();
         point = root.createSVGPoint();
         ctm = rec.getCTM();
         elementY = point.matrixTransform(ctm).y + recBox.height + root.parentNode.offsetTop + 20 + scrollOffset;

@@ -11,7 +11,7 @@ function staticNodePoints(element) {
         }
 
         if (element.orient.yes === 'b') {
-            element.yesOutPos = [ce.cx(), ce.cy() + ce.get(0).cy()];
+            element.yesOutPos = [ce.cx(), ce.bbox().y2];
             targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 't';
 
             if (targetShape.inNode === 'l') {
@@ -20,7 +20,7 @@ function staticNodePoints(element) {
         }
 
         if (element.orient.yes === 'r') {
-            element.yesOutPos = [ce.x() + ce.get(0).width(), ce.cy()];
+            element.yesOutPos = [ce.bbox().x2, ce.cy()];
             targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
 
             if (targetShape.inNode === 'l') {
@@ -34,14 +34,20 @@ function staticNodePoints(element) {
         targetShape = shapes[lookup[element.no]];
         te = element.svgnoid;
 
+        if (element.orient.no === 'l') {
+            element.noOutPos = [ce.bbox().x, ce.cy()];
+            targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
+            targetShape.inNodePos = targetShape.inNode == 'l' ? [te.x(), te.cy()] : [te.cx(), te.y()];
+        }
+
         if (element.orient.no === 'b') {
-            element.noOutPos = [ce.cx(), ce.cy() + ce.get(0).cy()];
+            element.noOutPos = [ce.cx(), ce.bbox().y2];
             targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 't';
             targetShape.inNodePos = [te.cx(), te.y()];
         }
 
         if (element.orient.no === 'r') {
-            element.noOutPos = [ce.cx() + ce.get(0).cx(), ce.cy()];
+            element.noOutPos = [ce.bbox().x2, ce.cy()];
             targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
 
             if (targetShape.inNode === 't') {
@@ -57,7 +63,7 @@ function staticNodePoints(element) {
     if (element.next) {
         targetShape = shapes[lookup[element.next]];
         if (element.orient.next === 'b') {
-            element.nextOutPos = [ce.cx(), ce.cy() + ce.get(0).cy()];
+            element.nextOutPos = [ce.cx(), ce.bbox().y2];
 
             targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 't';
 
@@ -70,8 +76,22 @@ function staticNodePoints(element) {
                 targetShape.inNodePos = [te.x(), te.cy()];
             }
         }
+
+        if (element.orient.next === 'l') {
+            element.nextOutPos = [ce.bbox().x, ce.bbox().cy];
+            targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
+            te = element.svgnextid;
+
+            if (targetShape.inNode === 't') {
+                targetShape.inNodePos = [te.cx(), te.y()];
+            }
+            if (targetShape.inNode === 'l') {
+                targetShape.inNodePos = [te.x(), te.cy()];
+            }
+        }
+
         if (element.orient.next === 'r') {
-            element.nextOutPos = [ce.x() + ce.get(0).width(), ce.y() + ce.get(0).cy()];
+            element.nextOutPos = [ce.bbox().x2, ce.bbox().cy];
             targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
             te = element.svgnextid;
 

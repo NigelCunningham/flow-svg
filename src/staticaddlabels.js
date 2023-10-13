@@ -23,5 +23,9 @@ function staticAddLabels(element) {
         if (element.orient.no === 'r') {
             label.move(element.noOutPos[0] + 20 + config.labelNudgeRight, element.noOutPos[1] - 20);
         }
+
+        if (element.orient.no === 'l') {
+            label.move(element.noOutPos[0] - 20 - config.labelNudgeRight, element.noOutPos[1] + 20);
+        }
     }
 }

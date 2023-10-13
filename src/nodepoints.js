@@ -50,6 +50,18 @@ function nodePoints(element) {
                 targetShape.inNodePos = [te.x(), te.cy()];
             }
         }
+
+        if (element.orient.no === 'l') {
+            element.noOutPos = [ce.cx(), ce.y()];
+            targetShape.inNode = targetShape.inNode !== undefined ? targetShape.inNode : 'l';
+
+            if (targetShape.inNode === 't') {
+                targetShape.inNodePos = [te.cx(), te.y()];
+            }
+            if (targetShape.inNode === 'l') {
+                targetShape.inNodePos = [te.x(), te.cy()];
+            }
+        }
         isPositioned.push(element.noid);
     }
 

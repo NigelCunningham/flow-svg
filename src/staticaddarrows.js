@@ -25,7 +25,7 @@ function staticAddArrows(element) {
         arrowhead = arrowHead(group);
         nxt = shapes[lookup[element.no]];
 
-        if (element.orient.no === 'b') {
+        if (element.orient.no === 'b' || element.orient.no === 'l') {
             arrowhead.move(nxt.inNodePos[0] - (config.arrowHeadHeight / 2), nxt.inNodePos[1] - config.arrowHeadHeight);
 
         }
